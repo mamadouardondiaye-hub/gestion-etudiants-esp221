@@ -1,4 +1,5 @@
 // ========== RENDU DRAWER ARCHIVES ==========
+// fonctionnalité RESTAURATION développée
 function renderArchiveList() {
     const container = document.getElementById('archiveListContainer');
     if (!container) return;
