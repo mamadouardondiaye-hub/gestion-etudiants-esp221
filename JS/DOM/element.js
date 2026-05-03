@@ -1,4 +1,5 @@
 // ========== MANIPULATION DOM ==========
+// fonctionnalité ajout développé
 function getElement(id) {
     return document.getElementById(id);
 }
