@@ -1,4 +1,5 @@
 // ========== INITIALISATION ==========
+// Fonctionnalité MODIFIER développée 
 document.addEventListener('DOMContentLoaded', function() {
     renderAll();
     
