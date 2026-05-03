@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des étudiants - ESP221</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+<body class="flex min-h-screen">
+    <aside class="w-64 bg-[#2a2a2a] text-white flex flex-col">
+        <div class="p-6">
+            <div class="flex items-center gap-2 mb-8">
+                <div class="bg-[#FF8C42] w-10 h-10 rounded flex items-center justify-center">
+                    <span class="text-white font-bold">E</span>
+                </div>
+                <div>
+                    <div class="font-bold text-sm">ESP221</div>
+                    <div class="text-xs text-gray-400">Gestion des formations</div>
+                </div>
+            </div>
+            <div class="text-xs text-gray-500 mb-2 px-2">
+                <i class="fa-solid fa-chart-simple mr-1"></i> Tableau de bord
+            </div>
+            <nav class="space-y-2">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-[#FF8C42] rounded-lg text-sm">
+                    <i class="fa-solid fa-users w-5"></i>
+                    <span>Étudiants</span>
+                </a>
+            </nav>
+        </div>
+        <div class="mt-auto p-6">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-[#3a3a3a] rounded-lg transition text-sm">
+                <div class="bg-[#FF8C42] w-8 h-8 rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold text-xs">A</span>
+                </div>
+                <span>Administrateur</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1">
+        <div class="p-8">
+            <div class="bg-[#FF8C42] text-white rounded-lg p-6 mb-6 flex flex-wrap justify-between items-center gap-4">
+                <h1 class="text-2xl font-bold"><i class="fa-solid fa-user-graduate mr-2"></i> Gestion des étudiants</h1>
+                <div class="flex gap-3">
+                    <button id="btnListView" class="px-5 py-2 rounded-lg font-medium border transition flex items-center gap-2 active-view-btn">
+                        <i class="fa-solid fa-list"></i> Liste
+                    </button>
+                    <button id="btnCardsView" class="px-5 py-2 rounded-lg font-medium border transition flex items-center gap-2 inactive-view-btn">
+                        <i class="fa-solid fa-table-cells-large"></i> Cartes
+                    </button>
+                    <button id="openArchiveBtn" class="bg-white text-[#FF8C42] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition flex items-center gap-2 ml-2">
+                        <i class="fa-solid fa-box-archive"></i>
+                        <span>Archives</span>
+                    </button>
+                    <button onclick="openAddModal()" class="bg-white text-[#FF8C42] px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Ajouter</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <div class="flex-1 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input id="searchInput" type="text" placeholder="Rechercher par nom, prénom ou email..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-[#FF8C42]">
+                    </div>
+                    <button id="resetSearchBtn" class="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <div class="relative">
+                        <i class="fa-solid fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <select id="formationFilter" class="pl-10 pr-8 py-3 border border-gray-300 rounded-lg outline-none focus:border-[#FF8C42] appearance-none bg-white">
+                            <option value="all">Toutes les formations</option>
+                            <option value="Licence Informatique">Licence Informatique</option>
+                            <option value="Master Data Science">Master Data Science</option>
+                            <option value="BTS Réseaux">BTS Réseaux</option>
+                            <option value="Licence Marketing">Licence Marketing</option>
+                            <option value="Génie Logiciel">Génie Logiciel</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Réseaux">Réseaux</option>
+                            <option value="Marketing">Marketing</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="multi-bar">
+                <label class="check-label">
+                    <input type="checkbox" id="selectAllChk" />
+                    <span><i class="fa-regular fa-square-check"></i> Tout sélectionner (page courante)</span>
+                </label>
+                <span class="text-sm text-gray-500"><i class="fa-regular fa-clock"></i> Cochez au moins 3 étudiants pour l'archivage groupé</span>
+                <button id="deleteSelBtn" class="btn-delete-sel" disabled>
+                    <i class="fa-solid fa-box-archive"></i> Archiver (<span id="selCount">0</span>)
+                </button>
+            </div>
+
+            <div id="tableViewContainer" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700" style="width: 80px;"><i class="fa-solid fa-check-square"></i> Sélec.</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700"><i class="fa-solid fa-hashtag"></i> ID</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700"><i class="fa-solid fa-user"></i> Nom</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Prénom</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700"><i class="fa-solid fa-envelope"></i> Email</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700"><i class="fa-solid fa-phone"></i> Téléphone</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700"><i class="fa-solid fa-location-dot"></i> Adresse</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700"><i class="fa-solid fa-graduation-cap"></i> Formation</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700"><i class="fa-solid fa-gear"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody"></tbody>
+                </table>
+            </div>
+            <div id="cardsViewContainer" class="cards-view"></div>
+
+            <div id="pagination" class="pagination"></div>
+
+            <div id="noResultMessage" class="hidden text-center py-12 bg-white rounded-lg shadow-sm mt-4">
+                <i class="fa-solid fa-face-sad-tear text-5xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 text-lg">Aucun étudiant trouvé</p>
+                <p class="text-gray-400 text-sm">Essayez de modifier votre recherche ou filtre</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="addModal" class="modal fixed inset-0 modal-backdrop items-center justify-center z-50">
+        <div class="bg-[#4A3326] rounded-xl w-full max-w-md mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="bg-[#FF8C42] px-6 py-4 rounded-t-xl flex justify-between items-center sticky top-0">
+                <h3 class="text-white text-xl font-bold"><i class="fa-solid fa-user-plus mr-2"></i> Ajouter étudiant</h3>
+                <button onclick="closeAddModal()" class="text-white hover:text-gray-200 text-2xl leading-none">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-user mr-1"></i> Nom <span class="text-red-400">*</span></label>
+                    <input id="addNom" type="text" placeholder="Entrez le nom" class="w-full bg-[#5A4336] text-white placeholder-gray-400 px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-user mr-1"></i> Prénom <span class="text-red-400">*</span></label>
+                    <input id="addPrenom" type="text" placeholder="Entrez le prénom" class="w-full bg-[#5A4336] text-white placeholder-gray-400 px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-envelope mr-1"></i> Email <span class="text-red-400">*</span></label>
+                    <input id="addEmail" type="email" placeholder="exemple@gmail.com" class="w-full bg-[#5A4336] text-white placeholder-gray-400 px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                    <div id="addEmailError" class="error-message hidden"></div>
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-phone mr-1"></i> Téléphone <span class="text-red-400">*</span></label>
+                    <input id="addTelephone" type="tel" placeholder="77 000 15 54" class="w-full bg-[#5A4336] text-white placeholder-gray-400 px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                    <div class="field-hint text-gray-400 text-xs mt-1">Format Sénégal: 77 123 45 67 | Gambie: 5 123 456</div>
+                    <div id="addTelError" class="error-message hidden"></div>
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-location-dot mr-1"></i> Adresse</label>
+                    <input id="addAdresse" type="text" placeholder="Rue, ville, code postal" class="w-full bg-[#5A4336] text-white placeholder-gray-400 px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-regular fa-calendar mr-1"></i> Date d'inscription</label>
+                    <input id="addDate" type="text" placeholder="jj/mm/aaaa" class="w-full bg-[#5A4336] text-white placeholder-gray-400 px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-graduation-cap mr-1"></i> Formation</label>
+                    <select id="addFormation" class="w-full bg-[#5A4336] text-white px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                        <option value="Génie Logiciel">Génie Logiciel</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Réseaux">Réseaux</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Licence Informatique">Licence Informatique</option>
+                        <option value="Master Data Science">Master Data Science</option>
+                        <option value="BTS Réseaux">BTS Réseaux</option>
+                        <option value="Licence Marketing">Licence Marketing</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button onclick="closeAddModal()" class="flex-1 bg-[#6B5444] hover:bg-[#5A4336] text-white py-3 rounded-lg font-medium transition">
+                        <i class="fa-solid fa-ban mr-1"></i> Annuler
+                    </button>
+                    <button onclick="ajouterEtudiant()" class="flex-1 bg-[#FF8C42] hover:bg-[#E67A39] text-white py-3 rounded-lg font-medium transition">
+                        <i class="fa-solid fa-save mr-1"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal fixed inset-0 modal-backdrop items-center justify-center z-50">
+        <div class="bg-[#4A3326] rounded-xl w-full max-w-md mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="bg-[#FF8C42] px-6 py-4 rounded-t-xl flex justify-between items-center sticky top-0">
+                <h3 class="text-white text-xl font-bold"><i class="fa-solid fa-pen mr-2"></i> Modifier étudiant</h3>
+                <button onclick="closeEditModal()" class="text-white hover:text-gray-200 text-2xl leading-none">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="editId">
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-user mr-1"></i> Nom</label>
+                    <input id="editNom" type="text" class="w-full bg-[#5A4336] text-white px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-user mr-1"></i> Prénom</label>
+                    <input id="editPrenom" type="text" class="w-full bg-[#5A4336] text-white px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-envelope mr-1"></i> Email</label>
+                    <input id="editEmail" type="email" class="w-full bg-[#5A4336] text-white px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                    <div id="editEmailError" class="error-message hidden"></div>
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-phone mr-1"></i> Téléphone</label>
+                    <input id="editTelephone" type="tel" class="w-full bg-[#5A4336] text-white px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                    <div id="editTelError" class="error-message hidden"></div>
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-location-dot mr-1"></i> Adresse</label>
+                    <input id="editAdresse" type="text" class="w-full bg-[#5A4336] text-white px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-regular fa-calendar mr-1"></i> Date d'inscription</label>
+                    <input id="editDate" type="text" class="w-full bg-[#5A4336] text-white px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                </div>
+                <div>
+                    <label class="text-white text-sm mb-2 block"><i class="fa-solid fa-graduation-cap mr-1"></i> Formation</label>
+                    <select id="editFormation" class="w-full bg-[#5A4336] text-white px-4 py-3 rounded-lg outline-none border-2 border-transparent focus:border-[#FF8C42]">
+                        <option value="Génie Logiciel">Génie Logiciel</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Réseaux">Réseaux</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Licence Informatique">Licence Informatique</option>
+                        <option value="Master Data Science">Master Data Science</option>
+                        <option value="BTS Réseaux">BTS Réseaux</option>
+                        <option value="Licence Marketing">Licence Marketing</option>
+                        <option value="BTS Comptabilité">BTS Comptabilité</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button onclick="closeEditModal()" class="flex-1 bg-[#6B5444] hover:bg-[#5A4336] text-white py-3 rounded-lg font-medium transition">
+                        <i class="fa-solid fa-ban mr-1"></i> Annuler
+                    </button>
+                    <button onclick="modifierEtudiant()" class="flex-1 bg-[#FF8C42] hover:bg-[#E67A39] text-white py-3 rounded-lg font-medium transition">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmArchiveModal" class="confirm-modal hidden">
+        <div class="confirm-content">
+            <i class="fa-solid fa-box-archive text-5xl text-[#FF8C42] mb-3"></i>
+            <h3 class="confirm-title">Archiver cet étudiant ?</h3>
+            <p id="confirmArchiveMsg" class="confirm-desc">L'étudiant sera déplacé dans les archives.</p>
+            <div class="confirm-actions">
+                <button class="confirm-btn confirm-cancel" onclick="closeArchiveConfirm()">Annuler</button>
+                <button class="confirm-btn confirm-confirm" onclick="confirmArchive()">Archiver</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmMultiArchiveModal" class="confirm-modal hidden">
+        <div class="confirm-content">
+            <i class="fa-solid fa-box-archive text-5xl text-[#FF8C42] mb-3"></i>
+            <h3 class="confirm-title">Archiver la sélection ?</h3>
+            <p id="confirmMultiArchiveMsg" class="confirm-desc">Ces étudiants seront déplacés dans les archives.</p>
+            <div class="confirm-actions">
+                <button class="confirm-btn confirm-cancel" onclick="closeMultiArchiveConfirm()">Annuler</button>
+                <button class="confirm-btn confirm-confirm" onclick="confirmMultiArchive()">Archiver</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="drawerOverlay" class="drawer-overlay"></div>
+    <div id="archiveDrawer" class="drawer">
+        <div class="drawer-header">
+            <h2><i class="fa-solid fa-box-archive mr-2"></i> Étudiants archivés</h2>
+            <button class="drawer-close" id="closeDrawerBtn">&times;</button>
+        </div>
+        <div class="drawer-body" id="archiveListContainer">
+            <div style="text-align:center;padding:40px;color:#999;">
+                <i class="fa-solid fa-inbox fa-3x mb-3"></i>
+                <p>Chargement...</p>
+            </div>
+        </div>
+        <div class="drawer-footer">
+            <button id="restoreSelectedBtn" class="btn-restore-multi" disabled>
+                <i class="fa-solid fa-trash-restore"></i> Désarchiver la sélection
+            </button>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="JS/Store/studentStore.js"></script>
+    
+    <script src="JS/Utils/validationForm.js"></script>
+    <script src="JS/Utils/studentDate.js"></script>
+    <script src="JS/Utils/searchFilter.js"></script>
+    
+    <script src="JS/UI/toastRenderer.js"></script>
+    <script src="JS/UI/errorRenderer.js"></script>
+    <script src="JS/UI/paginationRenderer.js"></script>
+    <script src="JS/UI/drawerRenderer.js"></script>
+    <script src="JS/UI/etudiantRenderer.js"></script>
+    
+    <script src="JS/DOM/element.js"></script>
+    
+    <script src="JS/Services/service.js"></script>
+    
+    <script src="JS/app.js"></script>
+</body>
+</html>

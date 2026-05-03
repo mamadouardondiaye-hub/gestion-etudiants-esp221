@@ -1,0 +1,331 @@
+body {
+    background-color: #f5f5f5;
+}
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+.modal {
+    display: none;
+}
+.modal.active {
+    display: flex;
+}
+.cards-view {
+    display: none;
+}
+.cards-view.active {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+.student-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+.student-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
+}
+.active-view-btn {
+    background-color: #FF8C42;
+    color: white;
+    border-color: #FF8C42;
+}
+.inactive-view-btn {
+    background-color: white;
+    color: #4a4a4a;
+    border-color: #e2e8f0;
+}
+.inactive-view-btn:hover {
+    background-color: #fff5ed;
+    border-color: #FF8C42;
+}
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.toast {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 20px;
+    min-width: 280px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.3s ease;
+    border-left: 4px solid;
+}
+.toast.success { border-left-color: #10b981; }
+.toast.error { border-left-color: #ef4444; }
+.toast.warning { border-left-color: #f59e0b; }
+.toast i:first-child { font-size: 18px; }
+.toast.success i:first-child { color: #10b981; }
+.toast.error i:first-child { color: #ef4444; }
+.toast .toast-close {
+    margin-left: auto;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+}
+.toast .toast-close:hover { color: #333; }
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+.card-checkbox {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    z-index: 10;
+}
+.student-card.selected {
+    border: 2px solid #FF8C42;
+    background-color: #fffaf5;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+.page-btn {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+.page-btn.active {
+    background: #FF8C42;
+    color: white;
+    border-color: #FF8C42;
+}
+.page-btn:hover:not(.active):not(:disabled) { background: #f0f0f0; }
+.page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.multi-bar {
+    background: #fff3e8;
+    border: 1px solid #FF8C42;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.check-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.btn-delete-sel {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+.btn-delete-sel:hover:not(:disabled) { background: #b91c1c; }
+.btn-delete-sel:disabled { background: #ccc; cursor: not-allowed; }
+.confirm-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+.confirm-modal.hidden { display: none; }
+.confirm-content {
+    background: #4A3326;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 400px;
+    text-align: center;
+    animation: modalPop 0.2s ease;
+}
+@keyframes modalPop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.confirm-title {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+.confirm-desc {
+    color: #ccc;
+    margin-bottom: 20px;
+}
+.confirm-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+.confirm-btn {
+    padding: 8px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+.confirm-cancel {
+    background: #6B5444;
+    color: white;
+}
+.confirm-cancel:hover { background: #5A4336; }
+.confirm-confirm {
+    background: #FF8C42;
+    color: white;
+}
+.confirm-confirm:hover { background: #e67a39; }
+
+.student-select {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+tr.selected { background-color: #fffaf5; }
+
+.drawer {
+    position: fixed;
+    top: 0;
+    right: -450px;
+    width: 450px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+    z-index: 20000;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+.drawer.open {
+    right: 0;
+}
+.drawer-header {
+    background: #FF8C42;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.drawer-header h2 {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+.drawer-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+.drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+.archive-item {
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.archive-info h4 {
+    font-weight: bold;
+    color: #333;
+}
+.archive-info p {
+    font-size: 12px;
+    color: #666;
+}
+.btn-restore {
+    background: #FF8C42;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.btn-restore:hover {
+    background: #e67a39;
+}
+.archive-checkbox {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+.archive-item-header {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+.drawer-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+.btn-restore-multi {
+    flex: 1;
+    background: #FF8C42;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-restore-multi:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 19999;
+    display: none;
+}
+.drawer-overlay.open {
+    display: block;
+}
