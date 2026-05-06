@@ -75,6 +75,7 @@ function ajouterEtudiant() {
     };
     
     etudiants.push(newEtudiant);
+    saveToLocalStorage();
     closeAddModal();
     
     document.getElementById('addNom').value = '';
@@ -129,6 +130,11 @@ function modifierEtudiant() {
     
     let valid = true;
     
+    if (!email) {
+        showToast("L'email est requis", "error");
+        return;
+    }
+    
     if (!isEmailUnique(email, id)) {
         showEmailError('editEmailError', 'Cet email existe déjà');
         valid = false;
@@ -155,6 +161,7 @@ function modifierEtudiant() {
         formation: formation
     };
     
+    saveToLocalStorage();
     closeEditModal();
     renderAll();
     showToast(`${prenom} ${nom} a été modifié avec succès`, "success");
@@ -182,6 +189,7 @@ function confirmArchive() {
             archives.push({ ...etud, archivedDate: getCurrentDate() });
             etudiants = etudiants.filter(e => e.id !== pendingArchiveId);
             selectedIds.delete(pendingArchiveId);
+            saveToLocalStorage();
             
             const filtered = getFilteredStudents();
             const totalPages = getTotalPages(filtered);
@@ -221,6 +229,7 @@ function confirmMultiArchive() {
     
     etudiants = etudiants.filter(e => !selectedIds.has(e.id));
     selectedIds.clear();
+    saveToLocalStorage();
     
     const filtered = getFilteredStudents();
     const totalPages = getTotalPages(filtered);
@@ -239,6 +248,7 @@ function restoreFromArchive(id) {
         const { archivedDate, ...student } = restored;
         etudiants.push(student);
         archives.splice(index, 1);
+        saveToLocalStorage();
         
         renderAll();
         renderArchiveList();
@@ -261,6 +271,7 @@ function restoreSelectedArchives() {
     });
     
     selectedArchiveIds.clear();
+    saveToLocalStorage();
     renderAll();
     renderArchiveList();
     showToast(`${idsToRestore.length} étudiant${idsToRestore.length > 1 ? 's' : ''} restauré${idsToRestore.length > 1 ? 's' : ''}`, "success");
